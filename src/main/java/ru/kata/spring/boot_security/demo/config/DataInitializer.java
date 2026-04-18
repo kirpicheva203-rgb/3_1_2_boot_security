@@ -35,6 +35,7 @@ public class DataInitializer {
             admin.setLastName("Admin");
             admin.setAge((byte) 30);
             admin.setRoles(Set.of(adminRole, userRole));
+            admin.setEmail("admin@mail.ru");
 
             userRepository.save(admin);
         }

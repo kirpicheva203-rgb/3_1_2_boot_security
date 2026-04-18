@@ -33,10 +33,13 @@ public class UserController {
 
 
     @GetMapping("/admin")
-    public String adminPage(Model model) {
+    public String adminPage(Model model, Principal principal) {
+        String username = principal.getName();
+        User currentUser = userService.findByUsername(username);
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("user", new User());
         model.addAttribute("allRoles", roleRepository.findAll());
+        model.addAttribute("currentUser", currentUser);
         return "admin";  // БЫЛО: return "users";
     }
 
@@ -77,9 +80,14 @@ public class UserController {
     }
 
     @GetMapping("/admin/edit")
-    public String editForm(@RequestParam Long id, Model model) {
+    public String editForm(@RequestParam (value = "id", required = true) Long id, Model model, Principal principal) {
+        String username = principal.getName();
+        User currentUser = userService.findByUsername(username);
+
         model.addAttribute("editUser", userService.getUser(id));
         model.addAttribute("allRoles", roleRepository.findAll());
+        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("currentUser", currentUser);
         return "edit";
     }
 
@@ -89,6 +97,7 @@ public class UserController {
                              Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("allRoles", roleRepository.findAll());
+            model.addAttribute("users", userService.getAllUsers());
             return "edit";
         }
         if (roleIds != null && !roleIds.isEmpty()) {

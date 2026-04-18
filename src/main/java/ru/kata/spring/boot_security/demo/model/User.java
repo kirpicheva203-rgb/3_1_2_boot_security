@@ -56,10 +56,21 @@ public class User implements UserDetails {
     @NotBlank
     @Column(name = "password")
     private String password;
-    @NotBlank
+
     @Column(name = "username", unique = true)
     private String username;
 
+    @NotBlank
+    @Column(name = "email")
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public User() {
     }
