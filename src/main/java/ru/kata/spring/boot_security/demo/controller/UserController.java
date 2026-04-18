@@ -80,7 +80,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/edit")
-    public String editForm(@RequestParam (value = "id", required = true) Long id, Model model, Principal principal) {
+    public String editForm(@RequestParam(value = "id", required = true) Long id, Model model, Principal principal) {
         String username = principal.getName();
         User currentUser = userService.findByUsername(username);
 
