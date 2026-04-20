@@ -64,7 +64,7 @@
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputFirstName">First Name</label>
                                 </h6>
-                                <input type="text" class="form-control" id="inputFirstName" th:field="*{name}"
+                                <input type="text" class="form-control" id="inputFirstName" th:field="*{username}"
                                        placeholder="First Name" required>
                             </div>
                             <div class="mb-2 mt-2 col-5 mx-auto form-group">
@@ -135,7 +135,7 @@
                             <tbody>
                             <tr th:each="u : ${users}">
                                 <td th:text="${u.id}"></td>
-                                <td th:text="${u.name}"></td>
+                                <td th:text="${u.username}"></td>
                                 <td th:text="${u.lastName}"></td>
                                 <td th:text="${u.age}"></td>
                                 <td th:text="${u.email}"></td>
@@ -148,7 +148,7 @@
                                             data-bs-toggle="modal"
                                             data-bs-target="#editModal"
                                             th:attr="data-id=${u.id},
-                     data-name=${u.name},
+                     data-name=${u.username},
                      data-lastname=${u.lastName},
                      data-age=${u.age},
                      data-email=${u.email}">
@@ -160,7 +160,7 @@
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteModal"
                                             th:attr="data-id=${u.id},
-                     data-name=${u.name},
+                     data-name=${u.username},
                      data-lastname=${u.lastName},
                      data-age=${u.age},
                      data-email=${u.email}">
@@ -200,7 +200,7 @@
 
                     <div class="mb-3 text-center">
                         <label>First name</label>
-                        <input type="text" class="form-control" name="name" id="editName">
+                        <input type="text" class="form-control" name="username" id="editName">
                     </div>
 
                     <div class="mb-3 text-center">
@@ -308,7 +308,7 @@
 
         document.getElementById('editId').value = button.getAttribute('data-id');
         document.getElementById('editIdDisplay').value = button.getAttribute('data-id');
-        document.getElementById('editName').value = button.getAttribute('data-name');
+        document.getElementById('editName').value = button.getAttribute('data-username');
         document.getElementById('editLastName').value = button.getAttribute('data-lastname');
         document.getElementById('editAge').value = button.getAttribute('data-age');
         document.getElementById('editEmail').value = button.getAttribute('data-email');
@@ -321,7 +321,7 @@
 
         document.getElementById('deleteId').value = button.getAttribute('data-id');
         document.getElementById('deleteIdView').value = button.getAttribute('data-id');
-        document.getElementById('deleteName').value = button.getAttribute('data-name');
+        document.getElementById('deleteName').value = button.getAttribute('data-username');
         document.getElementById('deleteLastName').value = button.getAttribute('data-lastname');
         document.getElementById('deleteAge').value = button.getAttribute('data-age');
         document.getElementById('deleteEmail').value = button.getAttribute('data-email');

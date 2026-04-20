@@ -31,7 +31,6 @@ public class DataInitializer {
             User admin = new User();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin"));
-            admin.setName("Admin");
             admin.setLastName("Admin");
             admin.setAge((byte) 30);
             admin.setRoles(Set.of(adminRole, userRole));

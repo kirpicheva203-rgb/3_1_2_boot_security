@@ -34,7 +34,6 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @NotBlank
     @Column(name = "name")
     private String name;
 
@@ -57,6 +56,7 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @NotBlank
     @Column(name = "username", unique = true)
     private String username;
 
