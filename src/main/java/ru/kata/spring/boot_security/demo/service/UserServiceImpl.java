@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void changeUser(User user) {
         User existing = getUser(user.getId());
 
-        existing.setName(user.getName());
+        existing.setName(user.getUsername());
         existing.setLastName(user.getLastName());
         existing.setAge(user.getAge());
         existing.setUsername(user.getUsername());

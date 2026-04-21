@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,7 +55,7 @@
 
                 <!-- Форма добавления нового пользователя -->
                 <div class="bg-white border tab-pane fade" id="newUser">
-                    <form th:action="@{/admin/add}" th:object="${user}" method="post">
+                    <form id="addUserForm">
                         <div class="bg-light text-black-50">
                             <h5 class="mb-0 border p-3 bg-light text-dark">Add new user</h5>
                         </div>
@@ -64,44 +64,36 @@
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputFirstName">First Name</label>
                                 </h6>
-                                <input type="text" class="form-control" id="inputFirstName" th:field="*{username}"
-                                       placeholder="First Name" required>
+                                <input type="text" class="form-control" id="inputFirstName">
                             </div>
                             <div class="mb-2 mt-2 col-5 mx-auto form-group">
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputLastName">Last Name</label>
                                 </h6>
-                                <input type="text" class="form-control" id="inputLastName" th:field="*{lastName}"
-                                       placeholder="Last Name" required>
+                                <input type="text" class="form-control" id="inputLastName">
                             </div>
                             <div class="mb-2 mt-2 col-5 mx-auto form-group">
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputAge">Age</label>
                                 </h6>
-                                <input type="number" class="form-control" th:field="*{age}" id="inputAge"
-                                       placeholder="Age" required>
+                                <input type="number" class="form-control" id="inputAge">
                             </div>
                             <div class="mb-2 mt-2 col-5 mx-auto form-group">
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputEmail4">Email</label>
                                 </h6>
-                                <input type="text" class="form-control" id="inputEmail4" th:field="*{email}"
-                                       placeholder="Email" required>
+                                <input type="text" class="form-control" id="inputEmail4">
                             </div>
                             <div class="mb-2 mt-2 col-5 mx-auto form-group">
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputPass">Password</label>
                                 </h6>
-                                <input type="password" class="form-control" id="inputPass" th:field="*{password}"
-                                       placeholder="Password" required>
+                                <input type="password" class="form-control" id="inputPass">
                             </div>
                             <div class="mb-2 mt-2 col-5 mx-auto form-group">
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputRole">Role</label></h6>
-                                <select multiple class="form-select" name="roleIds" id="inputRole" size="2">
-                                    <option th:each="role : ${allRoles}" th:value="${role.id}"
-                                            th:text="${role.name}"></option>
-                                </select>
+                                <select multiple class="form-select" name="roleIds" id="inputRole" size="2"></select>
                             </div>
                             <div class="mb-2 mt-2 text-center">
                                 <button type="submit" class="btn btn-success col-2">Add new user</button>
@@ -132,43 +124,7 @@
                                 <th>Delete</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr th:each="u : ${users}">
-                                <td th:text="${u.id}"></td>
-                                <td th:text="${u.username}"></td>
-                                <td th:text="${u.lastName}"></td>
-                                <td th:text="${u.age}"></td>
-                                <td th:text="${u.email}"></td>
-                                <td>
-                        <span th:each="role : ${u.roles}"
-                              th:text="${role.name + ' '}"></span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editModal"
-                                            th:attr="data-id=${u.id},
-                     data-name=${u.username},
-                     data-lastname=${u.lastName},
-                     data-age=${u.age},
-                     data-email=${u.email}">
-                                        Edit
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal"
-                                            th:attr="data-id=${u.id},
-                     data-name=${u.username},
-                     data-lastname=${u.lastName},
-                     data-age=${u.age},
-                     data-email=${u.email}">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                            </tbody>
+                            <tbody id="usersTable"></tbody>
                         </table>
                     </div>
                 </div>
@@ -182,8 +138,6 @@
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-
-            <form th:action="@{/admin/update}" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit user</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -225,23 +179,15 @@
 
                     <div class="mb-3 text-center">
                         <label>Role</label>
-                        <select multiple class="form-select" name="roleIds">
-                            <option th:each="role : ${allRoles}"
-                                    th:value="${role.id}"
-                                    th:text="${role.name}">
-                            </option>
-                        </select>
+                        <select multiple id="editRoles" class="form-select"></select>
                     </div>
 
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Edit</button>
+                    <button type="button" class="btn btn-primary" onclick="updateUser()">Edit</button>
                 </div>
-
-            </form>
-
         </div>
     </div>
 </div>
@@ -254,7 +200,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form th:action="@{/admin/delete}" method="post">
 
                 <div class="modal-body">
 
@@ -291,41 +236,177 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Close
                     </button>
-                    <button type="submit" class="btn btn-danger">
-                        Delete
-                    </button>
+                    <button type="button" class="btn btn-danger" onclick="deleteUserFromModal()">Delete</button>
                 </div>
-
-            </form>
-
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const editModal = document.getElementById('editModal');
-    editModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
+function loadRoles() {
+    $.ajax({
+        url: '/users/roles',
+        method: 'GET',
+        success: function (roles) {
+            let select = $("#inputRole");
+            let editSelect = $("#editRoles");
 
-        document.getElementById('editId').value = button.getAttribute('data-id');
-        document.getElementById('editIdDisplay').value = button.getAttribute('data-id');
-        document.getElementById('editName').value = button.getAttribute('data-username');
-        document.getElementById('editLastName').value = button.getAttribute('data-lastname');
-        document.getElementById('editAge').value = button.getAttribute('data-age');
-        document.getElementById('editEmail').value = button.getAttribute('data-email');
+            select.empty();
+            editSelect.empty();
+
+            roles.forEach(r => {
+                select.append(`<option value="${r.id}">${r.name}</option>`);
+                editSelect.append(`<option value="${r.id}">${r.name}</option>`);
+            });
+        }
+    });
+}
+
+function loadUsers() {
+    $.ajax({
+        url: '/users',
+        method: 'GET',
+        success: function (users) {
+            let table = $("#usersTable");
+            table.empty();
+
+            users.forEach(u => {
+                table.append(`
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td>${u.lastName}</td>
+                    <td>${u.age}</td>
+                    <td>${u.email}</td>
+                    <td>${u.roles.map(r => r.name).join(' ')}</td>
+                    <td><button class="btn btn-info" onclick="openEditModal(${u.id})">Edit</button></td>
+                    <td><button class="btn btn-danger" onclick="openDeleteModal(${u.id})">Delete</button></td>
+                </tr>
+            `);
+            });
+        }
+    });
+}
+
+$(document).ready(function () {
+    loadUsers();
+    loadRoles();
+    $("#addUserForm")[0].reset();
+});
+
+$("#addUserForm").on("submit", function (e) {
+    e.preventDefault();
+
+    let user = {
+        username: $("#inputFirstName").val(),
+        lastName: $("#inputLastName").val(),
+        age: $("#inputAge").val(),
+        email: $("#inputEmail4").val(),
+        password: $("#inputPass").val(),
+        roles: getSelectedRoles("inputRole")
+    };
+
+    $.ajax({
+        url: '/users',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(user),
+        success: function () {
+            loadUsers();
+            $("#addUserForm")[0].reset();
+        }
+    });
+});
+
+function updateUser() {
+    let user = {
+        id: $("#editId").val(),
+        username: $("#editName").val(),
+        lastName: $("#editLastName").val(),
+        age: $("#editAge").val(),
+        email: $("#editEmail").val(),
+        password: $("#editModal input[type='password']").val(),
+        roles: getSelectedRoles("editRoles")
+    };
+
+    $.ajax({
+        url: '/users',
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(user),
+        success: function () {
+            loadUsers();
+            $("#editModal").modal('hide');
+        }
+    });
+}
+
+function deleteUserFromModal() {
+    let id = $("#deleteId").val();
+
+    $.ajax({
+        url: '/users/' + id,
+        method: 'DELETE',
+        success: function () {
+            loadUsers();
+            $("#deleteModal").modal('hide');
+        }
+    });
+}
+
+function openEditModal(id) {
+    $.ajax({
+        url: '/users/' + id,
+        method: 'GET',
+        success: function (u) {
+
+            $("#editId").val(u.id);
+            $("#editIdDisplay").val(u.id);
+            $("#editName").val(u.username);
+            $("#editLastName").val(u.lastName);
+            $("#editAge").val(u.age);
+            $("#editEmail").val(u.email);
+
+            let rolesSelect = $("#editRoles");
+
+            rolesSelect.find("option").each(function () {
+                let option = $(this);
+                let selected = u.roles.some(r => r.id == option.val());
+                option.prop("selected", selected);
+            });
+
+            $("#editModal").modal('show');
+        }
+    });
+}
+
+function openDeleteModal(id) {
+    $.ajax({
+        url: '/users/' + id,
+        method: 'GET',
+        success: function (u) {
+
+            $("#deleteId").val(u.id);
+            $("#deleteIdView").val(u.id);
+            $("#deleteName").val(u.username);
+            $("#deleteLastName").val(u.lastName);
+            $("#deleteAge").val(u.age);
+            $("#deleteEmail").val(u.email);
+
+            $("#deleteModal").modal('show');
+        }
+    });
+}
+
+function getSelectedRoles(selectId) {
+    let roles = [];
+
+    $("#" + selectId + " option:selected").each(function () {
+        roles.push({ id: $(this).val() });
     });
 
-    const deleteModal = document.getElementById('deleteModal');
-
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-
-        document.getElementById('deleteId').value = button.getAttribute('data-id');
-        document.getElementById('deleteIdView').value = button.getAttribute('data-id');
-        document.getElementById('deleteName').value = button.getAttribute('data-username');
-        document.getElementById('deleteLastName').value = button.getAttribute('data-lastname');
-        document.getElementById('deleteAge').value = button.getAttribute('data-age');
-        document.getElementById('deleteEmail').value = button.getAttribute('data-email');
-    });
+    return roles;
+}
 </script>
 </body>
 </html>

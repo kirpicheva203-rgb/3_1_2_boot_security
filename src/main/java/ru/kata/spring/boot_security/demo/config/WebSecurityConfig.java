@@ -29,17 +29,18 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authenticationProvider(daoAuthenticationProvider())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN")
+//                        .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                         .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/login", "/css/**", "/js/**").permitAll()  // ДОБАВЛЕНО
+                        .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .successHandler(loginSuccessHandler).permitAll())
                 .logout(logout -> logout
-                        .logoutUrl("/logout")  // ДОБАВЛЕНО
-                        .logoutSuccessUrl("/login?logout")  // ДОБАВЛЕНО
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll());
         return http.build();
     }
