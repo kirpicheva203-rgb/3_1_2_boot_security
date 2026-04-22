@@ -29,7 +29,7 @@ public class DataInitializer {
             Role adminRole = roleRepository.save(new Role("ROLE_ADMIN"));
             Role userRole = roleRepository.save(new Role("ROLE_USER"));
             User admin = new User();
-            admin.setUsername("admin");
+            admin.setName("admin");
             admin.setPassword(passwordEncoder.encode("admin"));
             admin.setLastName("Admin");
             admin.setAge((byte) 30);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +11,11 @@
 
 <div class="bg-dark text-white d-flex justify-content-between align-items-center px-3 py-2">
     <div>
-        <strong th:text="${currentUser.username}"></strong>
+        <strong th:text="${#authentication.principal.email}"></strong>
         with roles:
-        <span th:each="role : ${currentUser.roles}"
-              th:text="${role.name + ' '}"></span>
+        <span th:each="role : ${#authentication.principal.authorities}"
+              th:text="${#strings.replace(role.authority, 'ROLE_', '') + ' '}">
+        </span>
     </div>
 
     <form th:action="@{/logout}" method="post">
@@ -28,8 +29,8 @@
         <!-- Создаём вертикальное меню -->
         <div class="col-2 bg-white min-vh-100 p-3">
             <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/admin">Admin</a>
+                <li class="nav-item bg-primary text-white d-flex">
+                    <a class="btn" href="/admin">Admin</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/user">User</a>
@@ -64,7 +65,7 @@
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputFirstName">First Name</label>
                                 </h6>
-                                <input type="text" class="form-control" id="inputFirstName" th:field="*{username}"
+                                <input type="text" class="form-control" id="inputFirstName" th:field="*{name}"
                                        placeholder="First Name" required>
                             </div>
                             <div class="mb-2 mt-2 col-5 mx-auto form-group">
@@ -99,8 +100,10 @@
                                 <h6 class="font-weight-bold text-center text-dark">
                                     <label for="inputRole">Role</label></h6>
                                 <select multiple class="form-select" name="roleIds" id="inputRole" size="2">
-                                    <option th:each="role : ${allRoles}" th:value="${role.id}"
-                                            th:text="${role.name}"></option>
+                                    <option th:each="role : ${allRoles}"
+                                            th:value="${role.id}"
+                                            th:text="${role.name}">
+                                    </option>
                                 </select>
                             </div>
                             <div class="mb-2 mt-2 text-center">
@@ -135,20 +138,21 @@
                             <tbody>
                             <tr th:each="u : ${users}">
                                 <td th:text="${u.id}"></td>
-                                <td th:text="${u.username}"></td>
+                                <td th:text="${u.name}"></td>
                                 <td th:text="${u.lastName}"></td>
                                 <td th:text="${u.age}"></td>
                                 <td th:text="${u.email}"></td>
                                 <td>
                         <span th:each="role : ${u.roles}"
-                              th:text="${role.name + ' '}"></span>
+                              th:text="${#strings.replace(role.name, 'ROLE_', '') + ' '}">
+                        </span>
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-info"
                                             data-bs-toggle="modal"
                                             data-bs-target="#editModal"
                                             th:attr="data-id=${u.id},
-                     data-name=${u.username},
+                     data-name=${u.name},
                      data-lastname=${u.lastName},
                      data-age=${u.age},
                      data-email=${u.email}">
@@ -160,7 +164,7 @@
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteModal"
                                             th:attr="data-id=${u.id},
-                     data-name=${u.username},
+                     data-name=${u.name},
                      data-lastname=${u.lastName},
                      data-age=${u.age},
                      data-email=${u.email}">
@@ -308,7 +312,7 @@
 
         document.getElementById('editId').value = button.getAttribute('data-id');
         document.getElementById('editIdDisplay').value = button.getAttribute('data-id');
-        document.getElementById('editName').value = button.getAttribute('data-username');
+        document.getElementById('editName').value = button.getAttribute('data-name');
         document.getElementById('editLastName').value = button.getAttribute('data-lastname');
         document.getElementById('editAge').value = button.getAttribute('data-age');
         document.getElementById('editEmail').value = button.getAttribute('data-email');
@@ -321,7 +325,7 @@
 
         document.getElementById('deleteId').value = button.getAttribute('data-id');
         document.getElementById('deleteIdView').value = button.getAttribute('data-id');
-        document.getElementById('deleteName').value = button.getAttribute('data-username');
+        document.getElementById('deleteName').value = button.getAttribute('data-name');
         document.getElementById('deleteLastName').value = button.getAttribute('data-lastname');
         document.getElementById('deleteAge').value = button.getAttribute('data-age');
         document.getElementById('deleteEmail').value = button.getAttribute('data-email');
