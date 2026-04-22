@@ -21,7 +21,7 @@
     Username: <input type="text" th:field="*{username}" />
     Password: <input type="password" th:field="*{password}" />
 
-    <select name="roleIds" multiple>
+    <select multiple th:field="*{roles}">
         <option th:each="role : ${allRoles}"
                 th:value="${role.id}"
                 th:text="${role.name}">
