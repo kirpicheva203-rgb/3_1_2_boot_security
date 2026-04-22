@@ -195,6 +195,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
     public String getRolesAsString() {
         return roles.stream()
                 .map(Role::getName)
