@@ -13,11 +13,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -34,6 +31,7 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
+    @NotBlank
     @Column(name = "name")
     private String name;
 
@@ -55,13 +53,12 @@ public class User implements UserDetails {
     @NotBlank
     @Column(name = "password")
     private String password;
-
-    @NotBlank
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     private String username;
 
+
     @NotBlank
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     public String getEmail() {
@@ -73,6 +70,19 @@ public class User implements UserDetails {
     }
 
     public User() {
+    }
+
+    public User(long id, String name, String lastName, byte age) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.age = age;
+    }
+
+    public User(String name, String lastName, Byte age) {
+        this.name = name;
+        this.lastName = lastName;
+        this.age = age;
     }
 
 
@@ -153,9 +163,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles == null) return List.of();
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+        return roles;
     }
 
     @Override
@@ -165,7 +173,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override
@@ -186,5 +194,11 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getRolesAsString() {
+        return roles.stream()
+                .map(Role::getName)
+                .collect(Collectors.joining(", "));
     }
 }

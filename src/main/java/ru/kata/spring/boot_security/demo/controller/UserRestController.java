@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,23 +43,28 @@ public class UserRestController {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable long id){
-        return userService.getUser(id);
+        return userService.findUserById(id);
     }
 
     @PostMapping
     public User addNewUser(@RequestBody User user){
-        userService.addUser(user);
+        userService.addUser(user, null);
         return user;
     }
 
     @PutMapping
     public void changeUser(@RequestBody User user){
-        userService.changeUser(user);
+        userService.updateUser(user);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable long id){
         userService.deleteUser(id);
+    }
+
+    @GetMapping("/current")
+    public User getCurrentUser(Authentication authentication) {
+        return (User) authentication.getPrincipal();
     }
 
 }

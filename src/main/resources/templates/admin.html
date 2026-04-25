@@ -1,31 +1,23 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+
 <body class="bg-light">
 
-<div class="bg-dark text-white d-flex justify-content-between align-items-center px-3 py-2">
-    <div>
-        <strong th:text="${currentUser.username}"></strong>
-        with roles:
-        <span th:each="role : ${currentUser.roles}"
-              th:text="${role.name + ' '}"></span>
-    </div>
-
-    <form th:action="@{/logout}" method="post">
-        <button type="submit" class="btn btn-outline-light btn-sm">
-            Logout
-        </button>
+<div class="bg-dark text-white d-flex justify-content-between px-3 py-2">
+    <div id="currentUser"></div>
+    <form action="/logout" method="post">
+        <button class="btn btn-outline-light btn-sm">Logout</button>
     </form>
 </div>
+
 <div class="container-fluid">
     <div class="row">
-        <!-- Создаём вертикальное меню -->
         <div class="col-2 bg-white min-vh-100 p-3">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -36,9 +28,10 @@
                 </li>
             </ul>
         </div>
-        <!-- Создаём основную оюласть -->
-        <div class="col-10 p-4 mb-0">
+
+        <div class="col-10 p-4">
             <h2>Admin panel</h2>
+
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users">
@@ -51,222 +44,81 @@
                     </button>
                 </li>
             </ul>
+
             <div class="tab-content mt-3">
 
-                <!-- Форма добавления нового пользователя -->
-                <div class="bg-white border tab-pane fade" id="newUser">
-                    <form id="addUserForm">
-                        <div class="bg-light text-black-50">
-                            <h5 class="mb-0 border p-3 bg-light text-dark">Add new user</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-2 mt-2 col-5 mx-auto form-group">
-                                <h6 class="font-weight-bold text-center text-dark">
-                                    <label for="inputFirstName">First Name</label>
-                                </h6>
-                                <input type="text" class="form-control" id="inputFirstName">
-                            </div>
-                            <div class="mb-2 mt-2 col-5 mx-auto form-group">
-                                <h6 class="font-weight-bold text-center text-dark">
-                                    <label for="inputLastName">Last Name</label>
-                                </h6>
-                                <input type="text" class="form-control" id="inputLastName">
-                            </div>
-                            <div class="mb-2 mt-2 col-5 mx-auto form-group">
-                                <h6 class="font-weight-bold text-center text-dark">
-                                    <label for="inputAge">Age</label>
-                                </h6>
-                                <input type="number" class="form-control" id="inputAge">
-                            </div>
-                            <div class="mb-2 mt-2 col-5 mx-auto form-group">
-                                <h6 class="font-weight-bold text-center text-dark">
-                                    <label for="inputEmail4">Email</label>
-                                </h6>
-                                <input type="text" class="form-control" id="inputEmail4">
-                            </div>
-                            <div class="mb-2 mt-2 col-5 mx-auto form-group">
-                                <h6 class="font-weight-bold text-center text-dark">
-                                    <label for="inputPass">Password</label>
-                                </h6>
-                                <input type="password" class="form-control" id="inputPass">
-                            </div>
-                            <div class="mb-2 mt-2 col-5 mx-auto form-group">
-                                <h6 class="font-weight-bold text-center text-dark">
-                                    <label for="inputRole">Role</label></h6>
-                                <select multiple class="form-select" name="roleIds" id="inputRole" size="2"></select>
-                            </div>
-                            <div class="mb-2 mt-2 text-center">
-                                <button type="submit" class="btn btn-success col-2">Add new user</button>
-                            </div>
-                        </div>
+                <div class="tab-pane fade show active" id="users">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Last Name</th>
+                            <th>Age</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody id="usersTable"></tbody>
+                    </table>
+                </div>
+
+                <div class="tab-pane fade" id="newUser">
+                    <form id="addUserForm" class="col-5 mx-auto">
+                        <input class="form-control mb-2" id="inputName" placeholder="Name">
+                        <input class="form-control mb-2" id="inputLastName" placeholder="Last Name">
+                        <input class="form-control mb-2" id="inputAge" type="number" placeholder="Age">
+                        <input class="form-control mb-2" id="inputEmail" placeholder="Email">
+                        <input class="form-control mb-2" id="inputPass" type="password" placeholder="Password">
+                        <select multiple class="form-select mb-2" id="inputRole"></select>
+                        <button class="btn btn-success w-100">Add</button>
                     </form>
-
                 </div>
-            </div>
 
-            <!-- Таблица пользователей -->
-            <div class="bg-white border tab-pane fade show active" id="users">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">All users</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-striped mb-0">
-                            <thead class="table-white">
-                            <tr>
-                                <th>ID</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Age</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
-                            </tr>
-                            </thead>
-                            <tbody id="usersTable"></tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- EDIT MODAL -->
+
+<div class="modal fade" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-content p-3">
+            <input type="hidden" id="editId">
+            <input class="form-control mb-2" id="editName">
+            <input class="form-control mb-2" id="editLastName">
+            <input class="form-control mb-2" id="editAge" type="number">
+            <input class="form-control mb-2" id="editEmail">
+            <input class="form-control mb-2" id="editPassword" type="password">
+            <select multiple class="form-select mb-2" id="editRoles"></select>
+            <button class="btn btn-primary" onclick="updateUser()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content p-3 text-center">
+            <input type="hidden" id="deleteId">
+            <p>Delete user?</p>
+            <button class="btn btn-danger" onclick="deleteUser()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit user</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
 
-                <div class="modal-body">
-
-                    <input type="hidden" name="id" id="editId">
-
-                    <div class="mb-3 text-center">
-                        <label>ID</label>
-                        <input type="text" class="form-control" id="editIdDisplay" disabled>
-                    </div>
-
-                    <div class="mb-3 text-center">
-                        <label>First name</label>
-                        <input type="text" class="form-control" name="username" id="editName">
-                    </div>
-
-                    <div class="mb-3 text-center">
-                        <label>Last name</label>
-                        <input type="text" class="form-control" name="lastName" id="editLastName">
-                    </div>
-
-                    <div class="mb-3 text-center">
-                        <label>Age</label>
-                        <input type="number" class="form-control" name="age" id="editAge">
-                    </div>
-
-                    <div class="mb-3 text-center">
-                        <label>Email</label>
-                        <input type="text" class="form-control" name="email" id="editEmail">
-                    </div>
-
-                    <div class="mb-3 text-center">
-                        <label>Password</label>
-                        <input type="password" class="form-control" name="password">
-                    </div>
-
-                    <div class="mb-3 text-center">
-                        <label>Role</label>
-                        <select multiple id="editRoles" class="form-select"></select>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="updateUser()">Edit</button>
-                </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Delete user</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-
-                <div class="modal-body">
-
-                    <input type="hidden" name="id" id="deleteId">
-
-                    <div class="mb-2">
-                        <label>ID</label>
-                        <input type="text" id="deleteIdView" class="form-control" disabled>
-                    </div>
-
-                    <div class="mb-2">
-                        <label>First name</label>
-                        <input type="text" id="deleteName" class="form-control" disabled>
-                    </div>
-
-                    <div class="mb-2">
-                        <label>Last name</label>
-                        <input type="text" id="deleteLastName" class="form-control" disabled>
-                    </div>
-
-                    <div class="mb-2">
-                        <label>Age</label>
-                        <input type="text" id="deleteAge" class="form-control" disabled>
-                    </div>
-
-                    <div class="mb-2">
-                        <label>Email</label>
-                        <input type="text" id="deleteEmail" class="form-control" disabled>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="deleteUserFromModal()">Delete</button>
-                </div>
-        </div>
-    </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-function loadRoles() {
-    $.ajax({
-        url: '/users/roles',
-        method: 'GET',
-        success: function (roles) {
-            let select = $("#inputRole");
-            let editSelect = $("#editRoles");
 
-            select.empty();
-            editSelect.empty();
-
-            roles.forEach(r => {
-                select.append(`<option value="${r.id}">${r.name}</option>`);
-                editSelect.append(`<option value="${r.id}">${r.name}</option>`);
-            });
-        }
-    });
-}
-
-function loadUsers() {
-    $.ajax({
-        url: '/users',
-        method: 'GET',
-        success: function (users) {
+    function loadUsers() {
+        $.get('/users', users => {
             let table = $("#usersTable");
             table.empty();
 
@@ -274,139 +126,134 @@ function loadUsers() {
                 table.append(`
                 <tr>
                     <td>${u.id}</td>
-                    <td>${u.username}</td>
+                    <td>${u.name}</td>
                     <td>${u.lastName}</td>
                     <td>${u.age}</td>
                     <td>${u.email}</td>
                     <td>${u.roles.map(r => r.name).join(' ')}</td>
-                    <td><button class="btn btn-info" onclick="openEditModal(${u.id})">Edit</button></td>
-                    <td><button class="btn btn-danger" onclick="openDeleteModal(${u.id})">Delete</button></td>
+                    <td><button class="btn btn-info" onclick="openEdit(${u.id})">Edit</button></td>
+                    <td><button class="btn btn-danger" onclick="openDelete(${u.id})">Delete</button></td>
                 </tr>
             `);
             });
-        }
+        });
+    }
+
+    function loadRoles() {
+        $.get('/users/roles', roles => {
+            $("#inputRole, #editRoles").empty();
+            roles.forEach(r => {
+                $("#inputRole, #editRoles").append(`<option value="${r.id}">${r.name}</option>`);
+            });
+        });
+    }
+
+    function loadCurrentUser() {
+        fetch('/users/current')
+            .then(r => r.json())
+            .then(u => {
+                $("#currentUser").html(
+                    `<strong>${u.email}</strong> with roles: ${u.roles.map(r => r.name.replace("ROLE_", "")).join(" ")}`
+                );
+            });
+    }
+
+    $("#addUserForm").submit(function (e) {
+        e.preventDefault();
+
+        let user = {
+            name: $("#inputName").val(),
+            lastName: $("#inputLastName").val(),
+            age: $("#inputAge").val(),
+            email: $("#inputEmail").val(),
+            password: $("#inputPass").val(),
+            roles: getRoles("#inputRole")
+        };
+
+        $.ajax({
+            url: '/users',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            success: () => {
+                loadUsers();
+                this.reset();
+            }
+        });
     });
-}
 
-$(document).ready(function () {
-    loadUsers();
-    loadRoles();
-    $("#addUserForm")[0].reset();
-});
-
-$("#addUserForm").on("submit", function (e) {
-    e.preventDefault();
-
-    let user = {
-        username: $("#inputFirstName").val(),
-        lastName: $("#inputLastName").val(),
-        age: $("#inputAge").val(),
-        email: $("#inputEmail4").val(),
-        password: $("#inputPass").val(),
-        roles: getSelectedRoles("inputRole")
-    };
-
-    $.ajax({
-        url: '/users',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(user),
-        success: function () {
-            loadUsers();
-            $("#addUserForm")[0].reset();
-        }
-    });
-});
-
-function updateUser() {
-    let user = {
-        id: $("#editId").val(),
-        username: $("#editName").val(),
-        lastName: $("#editLastName").val(),
-        age: $("#editAge").val(),
-        email: $("#editEmail").val(),
-        password: $("#editModal input[type='password']").val(),
-        roles: getSelectedRoles("editRoles")
-    };
-
-    $.ajax({
-        url: '/users',
-        method: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify(user),
-        success: function () {
-            loadUsers();
-            $("#editModal").modal('hide');
-        }
-    });
-}
-
-function deleteUserFromModal() {
-    let id = $("#deleteId").val();
-
-    $.ajax({
-        url: '/users/' + id,
-        method: 'DELETE',
-        success: function () {
-            loadUsers();
-            $("#deleteModal").modal('hide');
-        }
-    });
-}
-
-function openEditModal(id) {
-    $.ajax({
-        url: '/users/' + id,
-        method: 'GET',
-        success: function (u) {
-
+    function openEdit(id) {
+        $.get('/users/' + id, u => {
             $("#editId").val(u.id);
-            $("#editIdDisplay").val(u.id);
-            $("#editName").val(u.username);
+            $("#editName").val(u.name);
             $("#editLastName").val(u.lastName);
             $("#editAge").val(u.age);
             $("#editEmail").val(u.email);
 
-            let rolesSelect = $("#editRoles");
-
-            rolesSelect.find("option").each(function () {
-                let option = $(this);
-                let selected = u.roles.some(r => r.id == option.val());
-                option.prop("selected", selected);
+            $("#editRoles option").each(function () {
+                $(this).prop("selected", u.roles.some(r => r.id == this.value));
             });
 
-            $("#editModal").modal('show');
-        }
+            new bootstrap.Modal('#editModal').show();
+        });
+    }
+
+    function updateUser() {
+        let user = {
+            id: $("#editId").val(),
+            name: $("#editName").val(),
+            lastName: $("#editLastName").val(),
+            age: $("#editAge").val(),
+            email: $("#editEmail").val(),
+            password: $("#editPassword").val(),
+            roles: getRoles("#editRoles")
+        };
+
+        $.ajax({
+            url: '/users',
+            method: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            success: () => {
+                loadUsers();
+                bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            }
+        });
+    }
+
+    function openDelete(id) {
+        $("#deleteId").val(id);
+        new bootstrap.Modal('#deleteModal').show();
+    }
+
+    function deleteUser() {
+        let id = $("#deleteId").val();
+
+        $.ajax({
+            url: '/users/' + id,
+            method: 'DELETE',
+            success: () => {
+                loadUsers();
+                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+            }
+        });
+    }
+
+    function getRoles(selector) {
+        let roles = [];
+        $(selector + " option:selected").each(function () {
+            roles.push({id: $(this).val()});
+        });
+        return roles;
+    }
+
+    $(document).ready(() => {
+        loadUsers();
+        loadRoles();
+        loadCurrentUser();
     });
-}
 
-function openDeleteModal(id) {
-    $.ajax({
-        url: '/users/' + id,
-        method: 'GET',
-        success: function (u) {
-
-            $("#deleteId").val(u.id);
-            $("#deleteIdView").val(u.id);
-            $("#deleteName").val(u.username);
-            $("#deleteLastName").val(u.lastName);
-            $("#deleteAge").val(u.age);
-            $("#deleteEmail").val(u.email);
-
-            $("#deleteModal").modal('show');
-        }
-    });
-}
-
-function getSelectedRoles(selectId) {
-    let roles = [];
-
-    $("#" + selectId + " option:selected").each(function () {
-        roles.push({ id: $(this).val() });
-    });
-
-    return roles;
-}
 </script>
+
 </body>
 </html>
