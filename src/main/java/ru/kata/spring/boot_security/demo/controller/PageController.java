@@ -1,11 +1,13 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import ru.kata.spring.boot_security.demo.model.User;
 
 @Controller
-public class PageController{
+public class PageController {
 
     @GetMapping("/admin")
     public String adminPage() {
@@ -13,8 +15,8 @@ public class PageController{
     }
 
     @GetMapping("/user")
-    @ResponseBody
-    public String userPage() {
+    public String userPage(Authentication authentication, Model model) {
+        model.addAttribute("user", (User) authentication.getPrincipal());
         return "user";
     }
 }

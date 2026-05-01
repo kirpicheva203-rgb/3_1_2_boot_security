@@ -2,7 +2,6 @@ package ru.kata.spring.boot_security.demo.service;
 
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,6 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            PasswordEncoder passwordEncoder) {
@@ -48,17 +46,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void addUser(User user, List<Long> roleIds) {
+    public User addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         user.setRoles(fetchRoles(user.getRoles()));
-
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
     @Transactional
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found");
+        }
         userRepository.deleteById(id);
     }
 
@@ -70,6 +69,7 @@ public class UserServiceImpl implements UserService {
         existing.setName(user.getName());
         existing.setLastName(user.getLastName());
         existing.setAge(user.getAge());
+        existing.setEmail(user.getEmail());
 
         if (user.getPassword() != null && !user.getPassword().isBlank()) {
             existing.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -82,17 +82,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(existing);
     }
 
-    @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-    }
-
-    @Override
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
-    }
-
 
     private Set<Role> fetchRoles(Set<Role> roles) {
         if (roles == null || roles.isEmpty()) {
@@ -100,17 +89,6 @@ public class UserServiceImpl implements UserService {
         }
         return roles.stream()
                 .map(r -> roleRepository.findById(r.getId())
-                        .orElseThrow(() -> new EntityNotFoundException("Role not found")))
-                .collect(Collectors.toSet());
-    }
-
-    private Set<Role> fetchRolesByIds(List<Long> roleIds) {
-        if (roleIds == null || roleIds.isEmpty()) {
-            return new HashSet<>();
-        }
-
-        return roleIds.stream()
-                .map(id -> roleRepository.findById(id)
                         .orElseThrow(() -> new EntityNotFoundException("Role not found")))
                 .collect(Collectors.toSet());
     }

@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
@@ -21,44 +20,41 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserRestController {
 
-    @Autowired
     private final UserService userService;
+    private final RoleService roleService;
 
-    @Autowired
-    private final RoleRepository roleRepository;
-
-    public UserRestController(UserService userService, RoleRepository roleRepository) {
+    public UserRestController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
     }
 
     @GetMapping
-    public List<User> allUsers(){
+    public List<User> allUsers() {
         return userService.getAllUsers();
     }
+
     @GetMapping("/roles")
     public List<Role> getRoles() {
-        return roleRepository.findAll();
+        return roleService.findAll();
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable long id){
+    public User getUser(@PathVariable long id) {
         return userService.findUserById(id);
     }
 
     @PostMapping
-    public User addNewUser(@RequestBody User user){
-        userService.addUser(user, null);
-        return user;
+    public User addNewUser(@RequestBody User user) {
+        return userService.addUser(user);
     }
 
     @PutMapping
-    public void changeUser(@RequestBody User user){
+    public void changeUser(@RequestBody User user) {
         userService.updateUser(user);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id){
+    public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
     }
 

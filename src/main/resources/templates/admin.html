@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +8,7 @@
 
 <body class="bg-light">
 
+<!-- NAVBAR -->
 <div class="bg-dark text-white d-flex justify-content-between px-3 py-2">
     <div id="currentUser"></div>
     <form action="/logout" method="post">
@@ -18,6 +18,8 @@
 
 <div class="container-fluid">
     <div class="row">
+
+        <!-- SIDEBAR -->
         <div class="col-2 bg-white min-vh-100 p-3">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -29,7 +31,9 @@
             </ul>
         </div>
 
+        <!-- CONTENT -->
         <div class="col-10 p-4">
+
             <h2>Admin panel</h2>
 
             <ul class="nav nav-tabs">
@@ -47,6 +51,7 @@
 
             <div class="tab-content mt-3">
 
+                <!-- USERS TABLE -->
                 <div class="tab-pane fade show active" id="users">
                     <table class="table table-striped">
                         <thead>
@@ -65,6 +70,7 @@
                     </table>
                 </div>
 
+                <!-- NEW USER -->
                 <div class="tab-pane fade" id="newUser">
                     <form id="addUserForm" class="col-5 mx-auto">
                         <input class="form-control mb-2" id="inputName" placeholder="Name">
@@ -83,39 +89,133 @@
 </div>
 
 <!-- EDIT MODAL -->
-
 <div class="modal fade" id="editModal">
     <div class="modal-dialog">
         <div class="modal-content p-3">
-            <input type="hidden" id="editId">
-            <input class="form-control mb-2" id="editName">
-            <input class="form-control mb-2" id="editLastName">
-            <input class="form-control mb-2" id="editAge" type="number">
-            <input class="form-control mb-2" id="editEmail">
-            <input class="form-control mb-2" id="editPassword" type="password">
-            <select multiple class="form-select mb-2" id="editRoles"></select>
-            <button class="btn btn-primary" onclick="updateUser()">Save</button>
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit user</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+
+                <input type="hidden" id="editId">
+
+                <label>ID</label>
+                <input class="form-control mb-2" id="editIdView" disabled>
+
+                <label>Name</label>
+                <input class="form-control mb-2" id="editName">
+
+                <label>Last Name</label>
+                <input class="form-control mb-2" id="editLastName">
+
+                <label>Age</label>
+                <input class="form-control mb-2" id="editAge">
+
+                <label>Email</label>
+                <input class="form-control mb-2" id="editEmail">
+
+                <label>Password</label>
+                <input class="form-control mb-2" id="editPassword" type="password">
+
+                <label>Role</label>
+                <select multiple class="form-select" id="editRoles"></select>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" onclick="updateUser()">Edit</button>
+            </div>
+
         </div>
     </div>
 </div>
 
 <!-- DELETE MODAL -->
-
 <div class="modal fade" id="deleteModal">
     <div class="modal-dialog">
         <div class="modal-content p-3 text-center">
+
             <input type="hidden" id="deleteId">
-            <p>Delete user?</p>
-            <button class="btn btn-danger" onclick="deleteUser()">Delete</button>
+
+            <div class="mb-2">
+                <label>ID</label>
+                <input type="text" id="deleteIdView" class="form-control" disabled>
+            </div>
+
+            <div class="mb-2">
+                <label>First name</label>
+                <input type="text" id="deleteName" class="form-control" disabled>
+            </div>
+
+            <div class="mb-2">
+                <label>Last name</label>
+                <input type="text" id="deleteLastName" class="form-control" disabled>
+            </div>
+
+            <div class="mb-2">
+                <label>Age</label>
+                <input type="text" id="deleteAge" class="form-control" disabled>
+            </div>
+
+            <div class="mb-2">
+                <label>Email</label>
+                <input type="text" id="deleteEmail" class="form-control" disabled>
+            </div>
+
+            <div class="mb-2">
+                <label>Roles</label>
+                <select multiple class="form-select" id="deleteRoles" disabled></select>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" class="btn btn-danger" onclick="deleteUser()">
+                    Delete
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
 
+<!-- SCRIPTS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+    // DELETE MODAL (data-* вариант)
+    const deleteModal = document.getElementById('deleteModal');
+
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        const id = button.getAttribute('data-id');
+
+        document.getElementById('deleteId').value = id;
+        document.getElementById('deleteIdView').value = id;
+        document.getElementById('deleteName').value = button.getAttribute('data-name');
+        document.getElementById('deleteLastName').value = button.getAttribute('data-lastname');
+        document.getElementById('deleteAge').value = button.getAttribute('data-age');
+        document.getElementById('deleteEmail').value = button.getAttribute('data-email');
+        const roles = JSON.parse(button.getAttribute('data-roles'));
+        const rolesSelect = document.getElementById('deleteRoles');
+
+        rolesSelect.innerHTML = "";
+
+        roles.forEach(role => {
+            let option = document.createElement("option");
+            option.text = role.name;
+            option.selected = true;
+            rolesSelect.appendChild(option);
+        });
+    });
 
     function loadUsers() {
         $.get('/users', users => {
@@ -131,8 +231,26 @@
                     <td>${u.age}</td>
                     <td>${u.email}</td>
                     <td>${u.roles.map(r => r.name).join(' ')}</td>
-                    <td><button class="btn btn-info" onclick="openEdit(${u.id})">Edit</button></td>
-                    <td><button class="btn btn-danger" onclick="openDelete(${u.id})">Delete</button></td>
+
+                    <td>
+                        <button class="btn btn-info" onclick="openEdit(${u.id})">
+                            Edit
+                        </button>
+                    </td>
+
+                    <td>
+                        <button class="btn btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal"
+                                data-id="${u.id}"
+                                data-name="${u.name}"
+                                data-lastname="${u.lastName}"
+                                data-age="${u.age}"
+                                data-email="${u.email}"
+                                data-roles='${JSON.stringify(u.roles)}'>
+                            Delete
+                        </button>
+                    </td>
                 </tr>
             `);
             });
@@ -185,13 +303,14 @@
     function openEdit(id) {
         $.get('/users/' + id, u => {
             $("#editId").val(u.id);
+            $("#editIdView").val(u.id);
             $("#editName").val(u.name);
             $("#editLastName").val(u.lastName);
             $("#editAge").val(u.age);
             $("#editEmail").val(u.email);
 
             $("#editRoles option").each(function () {
-                $(this).prop("selected", u.roles.some(r => r.id == this.value));
+                $(this).prop("selected", u.roles.some(r => r.id == Number($(this).val())));
             });
 
             new bootstrap.Modal('#editModal').show();
@@ -219,11 +338,6 @@
                 bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
             }
         });
-    }
-
-    function openDelete(id) {
-        $("#deleteId").val(id);
-        new bootstrap.Modal('#deleteModal').show();
     }
 
     function deleteUser() {
